@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="Arrays.cs" />
     <Compile Include="BFSQueue.cs" />
+    <Compile Include="BinarySearch.cs" />
     <Compile Include="BinaryTree.cs" />
     <Compile Include="CircularQueue.cs" />
     <Compile Include="HashmapCode.cs" />
