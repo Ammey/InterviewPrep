@@ -34,7 +34,7 @@ namespace LeetCode
                 slow = slow.next;
             }
 
-            slow = reverse(slow);
+            slow = Reverse(slow);
             fast = head;
 
             while (slow != null)
@@ -49,7 +49,7 @@ namespace LeetCode
             return true;
         }
 
-        public static ListNode reverse(ListNode head)
+        public static ListNode Reverse(ListNode head)
         {
             ListNode prev = null;
             while (head != null)
