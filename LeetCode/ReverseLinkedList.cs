@@ -8,6 +8,7 @@ namespace LeetCode
         public static void Main()
         {
             //var a = ChampagneTower(2, 0, 0);
+            var numSquares = NumSquares(5);
             //var numSquares = CountPrimes(16);
             //var nums = new[] { 1, 3, 4, 2, 2 };
             //var findDuplicate = FindDuplicate(nums);
@@ -98,10 +99,8 @@ namespace LeetCode
             var numSquares = new int[n+1];
             numSquares[0] = 0;
             numSquares[1] = 1;
-            numSquares[2] = 2;
-            numSquares[3] = 3;
 
-            for(int i=4; i<=n; i++)
+            for(int i=2; i<=n; i++)
             {
                 numSquares[i] = i;
 

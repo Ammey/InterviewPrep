@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>LeetCode.Easy</StartupObject>
+    <StartupObject>LeetCode.Hard</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -43,6 +43,7 @@
     <Compile Include="BinarySearch.cs" />
     <Compile Include="BinaryTree.cs" />
     <Compile Include="CircularQueue.cs" />
+    <Compile Include="Hard.cs" />
     <Compile Include="PermutationClass.cs" />
     <Compile Include="HashmapCode.cs" />
     <Compile Include="LinkedListPalindrome.cs" />
