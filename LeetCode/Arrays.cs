@@ -12,6 +12,8 @@ namespace LeetCode
         {
             var candidates = new int[] { 10, 1, 2, 7, 6, 1, 5 };
             int target = 8;
+            var numsArr = new int[] { -2, 1, -3, 4, -1, 2, 1, -5, 4 };
+            var max = MaxSubArray(numsArr);
             var res = CombinationSum(candidates, target);
             var list1 = new [] { "Shogun", "Tapioca Express", "Burger King", "KFC" };
             var list2 = new [] { "KFC", "Shogun", "Burger King" };
@@ -27,6 +29,25 @@ namespace LeetCode
             var numss = new int[] { 1, 9, 9 };
             var target1 = PlusOne(numss);
             ans = PivotIndex(numss);
+        }
+
+        public static int MaxSubArray(int[] nums)
+        {
+            if (nums == null)
+            {
+                return -1;
+            }
+
+            int maxSoFar = nums[0];
+            int maxHere = nums[0];
+
+            //-2, 1, -3, 4, -1, 2, 1, -5, 4
+            for (int i = 1; i < nums.Length; i++)
+            {
+                maxHere = Math.Max(nums[i], maxHere + nums[i]);
+                maxSoFar = Math.Max(maxSoFar, maxHere);
+            }
+            return maxSoFar;
         }
 
         public static IList<IList<int>> CombinationSum(int[] candidates, int target)
