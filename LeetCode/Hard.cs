@@ -10,6 +10,9 @@ namespace LeetCode
     {
         public static void Main()
         {
+            string s = "ADOBECODEBANC";
+            string t = "ABC";
+            var ans = MinWindow(s, t);
             int[] x = new int[] { 2 };
             int[] y = new int[] {};
 
@@ -63,6 +66,65 @@ namespace LeetCode
             }
 
             return -1;
+        }
+
+        public static string MinWindow(string s, string t)
+        {
+            var goal = new Dictionary<char, int>();
+            int goalSize = t.Length;
+            int minLen = int.MaxValue;
+            string result = "";
+
+            //target dictionary
+            for (int k = 0; k < t.Length; k++)
+            {
+                goal.Add(t[k], goal.ContainsKey(t[k]) ? goal[t[k]] + 1 : 0);
+            }
+
+            int i = 0;
+            int total = 0;
+            var map = new Dictionary<char, int>();
+            //string s = "ADOBECODEBANC";
+            //string t = "ABC";
+            for (int j = 0; j < s.Length; j++)
+            {
+                char c = s[j];
+                if (!goal.ContainsKey(c))
+                {
+                    continue;
+                }
+
+                //if contains, increse
+                int count = map.ContainsKey(c) ? map[c] : 0;
+                if (count < goal[c])
+                {
+                    total++;
+                }
+
+                map.Add(c, count + 1);
+
+                if (total == goalSize)
+                {
+                    while (!goal.ContainsKey(s[i]) || map[s[i]] > goal[s[i]])
+                    {
+                        char pc = s[i];
+                        if (goal.ContainsKey(pc) && map[pc] > goal[pc])
+                        {
+                            map.Add(pc, map[pc] - 1);
+                        }
+
+                        i++;
+                    }
+
+                    if (minLen > j - i + 1)
+                    {
+                        minLen = j - i + 1;
+                        result = s.Substring(i, j + 1);
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

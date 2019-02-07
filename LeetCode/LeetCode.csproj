@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>LeetCode.Arrays</StartupObject>
+    <StartupObject>LeetCode.Dynamic</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -43,6 +43,7 @@
     <Compile Include="BinarySearch.cs" />
     <Compile Include="BinaryTree.cs" />
     <Compile Include="CircularQueue.cs" />
+    <Compile Include="Dynamic.cs" />
     <Compile Include="Hard.cs" />
     <Compile Include="PermutationClass.cs" />
     <Compile Include="HashmapCode.cs" />
@@ -53,6 +54,7 @@
     <Compile Include="MultiLevelList.cs" />
     <Compile Include="MyLinkedList.cs" />
     <Compile Include="Palindrome.cs" />
+    <Compile Include="RandomizedCollection.cs" />
     <Compile Include="ReverseLinkedList.cs" />
     <Compile Include="StackQueue.cs" />
     <Compile Include="Strings.cs" />
