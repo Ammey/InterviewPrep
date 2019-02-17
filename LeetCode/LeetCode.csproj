@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>LeetCode.Hard</StartupObject>
+    <StartupObject>LeetCode.BinarySearch</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
