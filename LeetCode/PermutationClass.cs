@@ -12,9 +12,50 @@ namespace LeetCode
 
         public static void Main()
         {
+            var obj = new PermutationClass();
+            obj.NextPermutation(new int[] { 1, 4, 3, 2 });
             int[] x = new int[] { 1, 2, 3 };
             var ans = Permute(x);
             Console.ReadLine();
+        }
+
+        public void NextPermutation(int[] nums)
+        {
+            var length = nums.Length;
+
+            int i = length - 1;
+            while(i > 0 && nums[i] <= nums[i - 1])
+            {
+                i--;
+            }
+
+            i--;
+
+            if(i >=0)
+            {
+                int j = length - 1;
+
+                while (j >= i && nums[j] <= nums[i])
+                {
+                    j--;
+                }
+
+                Swap(nums, i, j);
+            }
+
+            Reverse(nums, i + 1);
+        }
+
+        private void Reverse(int[] nums, int start)
+        {
+            int i = start;
+            int j = nums.Length - 1;
+            while (i < j)
+            {
+                Swap(nums, i, j);
+                i++;
+                j--;
+            }
         }
 
         static void Swap(int[] array, int position1, int position2)

@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>LeetCode.Dynamic</StartupObject>
+    <StartupObject>LeetCode.BinaryTree</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -60,6 +60,7 @@
     <Compile Include="Strings.cs" />
     <Compile Include="SumProblems.cs" />
     <Compile Include="Trie.cs" />
+    <Compile Include="UnionFind.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

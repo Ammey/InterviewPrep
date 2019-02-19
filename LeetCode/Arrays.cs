@@ -10,8 +10,13 @@ namespace LeetCode
     {
         public static void Main()
         {
+            var obj = new Arrays();
+            var numbers = new int[] { 1, 2, 3, 4 };
+            obj.PermuteUnique(numbers);
             var candidates = new int[] { 10, 1, 2, 7, 6, 1, 5 };
             int target = 8;
+            var c3 = CombinationSum3(3, 9);
+            var c2 = CombinationSum2(candidates, target);
             var numsArr = new int[] { -2, 1, -3, 4, -1, 2, 1, -5, 4 };
             var max = MaxSubArray(numsArr);
             var res = CombinationSum(candidates, target);
@@ -58,39 +63,113 @@ namespace LeetCode
                 return res;
             }
 
-            Array.Sort(candidates);
-            Traverse(candidates, target, new List<int>(), res);
+            Traverse(candidates, 0, target, new List<int>(), res);
             return res;
         }
 
-        private static void Traverse(int[] can, int target, List<int> cur, List<IList<int>> res)
+        public static IList<IList<int>> CombinationSum2(int[] candidates, int target)
         {
-            for(int i = 0; i < can.Length; i++)
+            var res = new List<IList<int>>();
+            if (candidates == null || candidates.Length == 0)
+            {
+                return res;
+            }
+
+            Array.Sort(candidates);
+
+            Traverse(candidates, 0, target, new List<int>(), res);
+            return res;
+        }
+
+        private static void Traverse(int[] can, int index, int target, List<int> cur, List<IList<int>> res)
+        {
+            if (target < 0)
+            {
+                return;
+            }
+
+            if (target == 0 )
+            {
+                res.Add(new List<int>(cur));
+                return;
+            }
+
+            for (int i = index; i < can.Length; i++)
             {
                 cur.Add(can[i]);
-                int curSum = can[i];
-                for(int j = i + 1; j < can.Length; j++)
+                Traverse(can, i + 1, target - can[i], cur, res);
+                cur.RemoveAt(cur.Count - 1);
+            }
+        }
+
+        public static IList<IList<int>> CombinationSum3(int k, int n)
+        {
+            var res = new List<IList<int>>();
+            int[] candidates = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+            if (candidates == null || candidates.Length == 0)
+            {
+                return res;
+            }
+
+            Traverse3(candidates, 0, k, n, new List<int>(), res);
+            return res;
+        }
+
+        private static void Traverse3(int[] can, int index, int count, int target, List<int> cur, List<IList<int>> res)
+        {
+            if (target < 0 || cur.Count > count)
+            {
+                return;
+            }
+
+            if (target == 0 && cur.Count == count)
+            {
+                res.Add(new List<int>(cur));
+                return;
+            }
+
+            for (int i = index; i < can.Length; i++)
+            {
+                cur.Add(can[i]);
+                Traverse3(can, i+1, count, target - can[i], cur, res);
+                cur.RemoveAt(cur.Count - 1);
+            }
+        }
+
+        public IList<IList<int>> PermuteUnique(int[] nums)
+        {
+            var res = new List<IList<int>>();
+            if (nums == null || nums.Length == 0)
+            {
+                return res;
+            }
+            var used = new bool[nums.Length];
+            Array.Sort(nums);
+            TraversePermute2(nums, used, new List<int>(), res);
+
+            return res;
+        }
+
+        private void TraversePermute2(int[] can, bool[] used, List<int> cur, List<IList<int>> res)
+        {
+            if (cur.Count == can.Length)
+            {
+                res.Add(new List<int>(cur));
+                return;
+            }
+
+            for (int i = 0; i < can.Length; i++)
+            {
+                if((i > 0 && can[i] == can[i-1] && !used[i-1]) || used[i])
                 {
-                    if(curSum + can[j] > target)
-                    {
-                        break;
-                    }
-
-                    if(curSum + can[j] + can[j] > target)
-                    {
-                        continue;
-                    }
-
-                    curSum += can[j];
-                    cur.Add(can[j]);
-
-                    if(curSum == target)
-                    {
-                        res.Add(cur);
-                        break;
-                    }
+                    continue;
                 }
-
+                used[i] = true;
+                cur.Add(can[i]);
+                TraversePermute2(can, used, cur, res);
+                cur.RemoveAt(cur.Count - 1);
+                used[i] = false;
             }
         }
 
