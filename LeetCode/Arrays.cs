@@ -8,6 +8,7 @@ namespace LeetCode
 {
     class Arrays
     {
+        int permuteCount = 0;
         public static void Main()
         {
             var obj = new Arrays();
@@ -171,6 +172,22 @@ namespace LeetCode
                 cur.RemoveAt(cur.Count - 1);
                 used[i] = false;
             }
+        }
+
+        public bool ValidSquare(int[] p1, int[] p2, int[] p3, int[] p4)
+        {
+            return CheckDistance(p1, p2, p3, p4) || CheckDistance(p1, p3, p2, p4) || CheckDistance(p1, p2, p4, p3);
+        }
+
+        public double GetDistance(int[] p1, int[] p2)
+        {
+            return (p2[1] - p1[1]) * (p2[1] - p1[1]) + (p2[0] - p1[0]) * (p2[0] - p1[0]);
+        }
+        public bool CheckDistance(int[] p1, int[] p2, int[] p3, int[] p4)
+        {
+            return GetDistance(p1, p2) > 0 && GetDistance(p1, p2) == GetDistance(p2, p3) &&
+                GetDistance(p2, p3) == GetDistance(p3, p4) && GetDistance(p3, p4) == GetDistance(p4, p1) && 
+                GetDistance(p1, p3) == GetDistance(p2, p4);
         }
 
         public static void MoveZeroes(int[] nums)

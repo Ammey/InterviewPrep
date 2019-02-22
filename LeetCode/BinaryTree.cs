@@ -23,13 +23,15 @@ namespace LeetCode
             var obj = new BinaryTree();
             var treeNode = new TreeNode(4);
             var node2 = new TreeNode(9);
-            var node3 = new TreeNode(0);
+            var node3 = new TreeNode(10);
             var node4 = new TreeNode(5);
             var node5 = new TreeNode(1);
             node2.right = node5;
             node2.left = node4;
             treeNode.right = node3;
             treeNode.left = node2;
+            var allPaths = obj.BinaryTreePaths(treeNode);
+            var resultList = obj.PathSum2(treeNode, 14);
             bool hasSum = obj.HasPathSum(treeNode, 18);
             obj.SumNumbers(treeNode);
 
@@ -154,6 +156,60 @@ namespace LeetCode
             maxSum = Math.Max(maxSum, pathSum);
 
             return root.val + Math.Max(leftSum, rightSum);
+        }
+
+        public IList<string> BinaryTreePaths(TreeNode root)
+        {
+            var result = new List<string>();
+            PrintPaths(root, "", result);
+            return result;
+        }
+
+        private void PrintPaths(TreeNode root, string path, List<string> result)
+        {
+            if (root != null)
+            {
+                path += root.val.ToString();
+                if ((root.left == null) && (root.right == null))
+                    result.Add(path);
+                else
+                {
+                    path += "->";
+                    PrintPaths(root.left, path, result);
+                    PrintPaths(root.right, path, result);
+                }
+            }
+        }
+
+        // MED : https://leetcode.com/problems/path-sum-ii/
+        public IList<IList<int>> PathSum2(TreeNode root, int sum)
+        {
+            var result = new List<IList<int>>();
+            SumHelper(root, sum, 0, new List<int>(), result);
+            return result;
+        }
+
+        private void SumHelper(TreeNode root, int sum, int curSum, List<int> curNums, List<IList<int>> result)
+        {
+            if(root == null)
+            {
+                return;
+            }
+
+            curNums.Add(root.val);
+            curSum += root.val;
+
+            if(curSum == sum && root.left == null && root.right == null)
+            {
+                result.Add(new List<int> (curNums));
+                curNums.RemoveAt(curNums.Count - 1);
+                return;
+            }
+
+            SumHelper(root.left, sum, curSum, curNums, result);
+            SumHelper(root.right, sum, curSum, curNums, result);
+
+            curNums.RemoveAt(curNums.Count - 1);
         }
 
         public static IList<int> InorderTraversal(TreeNode root)
