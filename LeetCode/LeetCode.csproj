@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>LeetCode.PermutationClass</StartupObject>
+    <StartupObject>LeetCode.BinaryTree</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -45,6 +45,8 @@
     <Compile Include="CircularQueue.cs" />
     <Compile Include="Dynamic.cs" />
     <Compile Include="Hard.cs" />
+    <Compile Include="LFUCache.cs" />
+    <Compile Include="LRUCache.cs" />
     <Compile Include="PermutationClass.cs" />
     <Compile Include="HashmapCode.cs" />
     <Compile Include="LinkedListPalindrome.cs" />

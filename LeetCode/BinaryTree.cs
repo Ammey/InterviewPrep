@@ -44,8 +44,77 @@ namespace LeetCode
             node3.right = node5;
             treeNode.left = node2;
             treeNode.right = node3;
-            var sum = obj.MaxPathSum(treeNode);
-            var inorderList = InorderTraversal(treeNode);
+            var depth = obj.MaxDepth(treeNode);
+            //var sum = obj.MaxPathSum(treeNode);
+            //var inorderList = InorderTraversal(treeNode);
+            //var preOrderList = PreorderTraversal(treeNode);
+            //var postOrderList = PostorderTraversal(treeNode);
+            var levelOrderLists = LevelOrder(treeNode);
+        }
+
+        public int MaxDepth(TreeNode root)
+        {
+            if(root == null)
+            {
+                return 0;
+            }
+
+            var lDepth = MaxDepth(root.left);
+            var rDepth = MaxDepth(root.right);
+
+            return Math.Max(rDepth, lDepth) + 1;
+
+        }
+
+        public int countUnivalSubtrees(TreeNode root)
+        {
+            int[] count = new int[1];
+            UnivalHelper(root, count);
+            return count[0];
+        }
+
+        private bool UnivalHelper(TreeNode node, int[] count)
+        {
+            if (node == null)
+            {
+                return true;
+            }
+            bool left = UnivalHelper(node.left, count);
+            bool right = UnivalHelper(node.right, count);
+            if (left && right)
+            {
+                if (node.left != null && node.val != node.left.val)
+                {
+                    return false;
+                }
+                if (node.right != null && node.val != node.right.val)
+                {
+                    return false;
+                }
+                count[0]++;
+                return true;
+            }
+            return false;
+        }
+
+        public bool IsSymmetric(TreeNode root)
+        {
+            return root == null || IsSymmetricHelper(root.left, root.right);
+        }
+
+        private bool IsSymmetricHelper(TreeNode left, TreeNode right)
+        {
+            if (left == null || right == null)
+            {
+                return left == right;
+            }
+
+            if (left.val != right.val)
+            {
+                return false;
+            }
+
+            return IsSymmetricHelper(left.left, right.right) && IsSymmetricHelper(left.right, right.left);
         }
 
         // MED : https://leetcode.com/problems/sum-root-to-leaf-numbers/
@@ -210,6 +279,121 @@ namespace LeetCode
             SumHelper(root.right, sum, curSum, curNums, result);
 
             curNums.RemoveAt(curNums.Count - 1);
+        }
+
+        public static IList<IList<int>> LevelOrder(TreeNode root)
+        {
+            var result = new List<IList<int>>();
+
+            if (root == null)
+            {
+                return result;
+            }
+
+            var treeQ = new Queue<TreeNode>();
+            treeQ.Enqueue(root);
+            treeQ.Enqueue(null);
+            var curList = new List<int>();
+
+            while(treeQ.Any())
+            {
+                var node = treeQ.Dequeue();
+                if(node == null)
+                {
+                    result.Add(curList);
+                    curList = new List<int>();
+                    if (treeQ.Any())
+                    {
+                        treeQ.Enqueue(null);
+                    }
+                    continue;
+                }
+
+                curList.Add(node.val);
+
+                if(node.left != null)
+                {
+                    treeQ.Enqueue(node.left);
+                }
+
+                if (node.right != null)
+                {
+                    treeQ.Enqueue(node.right);
+                }
+            }
+
+            return result;
+
+        }
+
+        public static IList<int> PreorderTraversal(TreeNode root)
+        {
+            var result = new List<int>();
+
+            if (root == null)
+            {
+                return result;
+            }
+            var treeStack = new Stack<TreeNode>();
+            treeStack.Push(root);
+
+            while(treeStack.Any())
+            {
+                var top = treeStack.Pop();
+                result.Add(top.val);
+
+                if(top.right != null)
+                {
+                    treeStack.Push(top.right);
+                }
+
+                if (top.left != null)
+                {
+                    treeStack.Push(top.left);
+                }
+            }
+
+            return result;
+        }
+
+        public static IList<int> PostorderTraversal(TreeNode root)
+        {
+            var result = new List<int>();
+
+            if (root == null)
+            {
+                return result;
+            }
+
+            var treeStack = new Stack<TreeNode>();
+            treeStack.Push(root);
+
+            while (treeStack.Any())
+            {
+                var top = treeStack.Pop();
+
+                if(top.right == null && top.left == null)
+                {
+                    result.Add(top.val);
+                    continue;
+                }
+
+                treeStack.Push(top);
+
+                if (top.right != null)
+                {
+                    treeStack.Push(top.right);
+                    top.right = null;
+                }
+
+                if (top.left != null)
+                {
+                    treeStack.Push(top.left);
+                    top.left = null;
+                }
+            }
+
+            return result;
         }
 
         public static IList<int> InorderTraversal(TreeNode root)
