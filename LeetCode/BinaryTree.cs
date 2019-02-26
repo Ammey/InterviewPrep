@@ -10,6 +10,7 @@ namespace LeetCode
     {
         int maxSum = int.MinValue;
         int leafSum = 0;
+        int preIndex = 0;
         public class TreeNode
         {
             public int val;
@@ -20,7 +21,11 @@ namespace LeetCode
 
         public static void Main()
         {
+            
             var obj = new BinaryTree();
+            var preorder = new int[] { 3, 9, 20, 15, 7 };
+            var inorder = new int[] { 9, 3, 15, 20, 7 };
+            var cRoot = obj.BuildTree(preorder, inorder);
             var treeNode = new TreeNode(4);
             var node2 = new TreeNode(9);
             var node3 = new TreeNode(10);
@@ -44,12 +49,13 @@ namespace LeetCode
             node3.right = node5;
             treeNode.left = node2;
             treeNode.right = node3;
-            var depth = obj.MaxDepth(treeNode);
+            //var depth = obj.MaxDepth(treeNode);
             //var sum = obj.MaxPathSum(treeNode);
             //var inorderList = InorderTraversal(treeNode);
             //var preOrderList = PreorderTraversal(treeNode);
             //var postOrderList = PostorderTraversal(treeNode);
-            var levelOrderLists = LevelOrder(treeNode);
+            //var levelOrderLists = LevelOrder(treeNode);
+            var lca = obj.LowestCommonAncestor(treeNode, node2, node4);
         }
 
         public int MaxDepth(TreeNode root)
@@ -64,6 +70,70 @@ namespace LeetCode
 
             return Math.Max(rDepth, lDepth) + 1;
 
+        }
+
+        public TreeNode BuildTree(int[] preorder, int[] inorder)
+        {
+            var length = preorder.Count();
+            var root = BuildTreeHelper(preorder, inorder, 0, length - 1);
+            return root;
+        }
+
+        private TreeNode BuildTreeHelper(int[] preorder, int[] inorder, int start, int end)
+        {
+            if(start > end)
+            {
+                return null;
+            }
+
+            var node = new TreeNode(preorder[preIndex++]);
+
+            if(start == end)
+            {
+                return node;
+            }
+
+            var inorderIndex = Search(inorder, start, end, node.val);
+
+            node.left = BuildTreeHelper(preorder, inorder, start, inorderIndex - 1);
+            node.right = BuildTreeHelper(preorder, inorder, inorderIndex + 1, end);
+
+            return node;
+        }
+
+        public int Search(int[] arr, int strt, int end, int value)
+        { 
+            for (int i = strt; i <= end; i++)
+            {
+                if (arr[i] == value)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public TreeNode LowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q)
+        {
+            if(root == null)
+            {
+                return null;
+            }
+
+            if(root.val == p.val || root.val == q.val)
+            {
+                return root;
+            }
+
+            var lca = LowestCommonAncestor(root.left, p, q);
+            var rca = LowestCommonAncestor(root.right, p, q);
+
+            if(lca != null && rca != null)
+            {
+                return root;
+            }
+
+            return lca ?? rca;
         }
 
         public int countUnivalSubtrees(TreeNode root)
