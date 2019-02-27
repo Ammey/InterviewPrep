@@ -19,13 +19,86 @@ namespace LeetCode
             public TreeNode(int x) { val = x; }
         }
 
+        public class Node
+        {
+            public int val;
+            public Node left;
+            public Node right;
+            public Node next;
+
+            public Node() { }
+            public Node(int _val, Node _left, Node _right, Node _next)
+            {
+                val = _val;
+                left = _left;
+                right = _right;
+                next = _next;
+            }
+        }
+
+        public string serialize(TreeNode root)
+        {
+            if (root == null) return "null";
+            return root.val + " " + serialize(root.left) + " " + serialize(root.right);
+        }
+
+        // Decodes your encoded data to tree.
+        public TreeNode deserialize(string data)
+        {
+            List<TreeNode> list = new List<TreeNode>();
+
+            if (data == "null") return null;
+
+            string[] words = data.Split(' ');
+            TreeNode root = new TreeNode(Convert.ToInt32(words[0]));
+            list.Add(root);
+
+            bool goLeft = true;
+            for (int i = 1; i < words.Count(); ++i)
+            {
+                if (words[i] == "null")
+                {
+                    if (goLeft) goLeft = false;
+                    else list.RemoveAt(list.Count() - 1);
+                }
+                else
+                {
+                    TreeNode node = new TreeNode(Convert.ToInt32(words[i]));
+                    if (goLeft)
+                    {
+                        list[list.Count() - 1].left = node;
+                    }
+                    else
+                    {
+                        list[list.Count() - 1].right = node;
+                        list.RemoveAt(list.Count() - 1);
+                    }
+                    list.Add(node);
+                    goLeft = true;
+                }
+            }
+
+            return root;
+        }
+
         public static void Main()
         {
-            
+            var nTreeNode = new Node(4, null, null, null);
+            var nnode2 = new Node(9, null, null, null);
+            var nnode3 = new Node(10, null, null, null);
+            var nnode4 = new Node(5, null, null, null);
+            var nnode5 = new Node(1, null, null, null);
+            nnode2.right = nnode5;
+            nnode2.left = nnode4;
+            nTreeNode.right = nnode3;
+            nTreeNode.left = nnode2;
             var obj = new BinaryTree();
+            var next = obj.Connect(nTreeNode);
             var preorder = new int[] { 3, 9, 20, 15, 7 };
             var inorder = new int[] { 9, 3, 15, 20, 7 };
-            var cRoot = obj.BuildTree(preorder, inorder);
+            var postOrder = new int[] { 9, 15, 7, 20, 3 };
+            var pRoot = obj.BuildTree(inorder, postOrder);
+            var cRoot = obj.BuildPreOrderTree(preorder, inorder);
             var treeNode = new TreeNode(4);
             var node2 = new TreeNode(9);
             var node3 = new TreeNode(10);
@@ -69,17 +142,95 @@ namespace LeetCode
             var rDepth = MaxDepth(root.right);
 
             return Math.Max(rDepth, lDepth) + 1;
-
         }
 
-        public TreeNode BuildTree(int[] preorder, int[] inorder)
+        public Node Connect(Node root)
         {
-            var length = preorder.Count();
-            var root = BuildTreeHelper(preorder, inorder, 0, length - 1);
+            if(root == null)
+            {
+                return root;
+            }
+
+            var q = new Queue<Node>();
+            q.Enqueue(root);
+            q.Enqueue(null);
+
+            while(q.Count != 0)
+            {
+                var node = q.Dequeue();
+                if(node == null)
+                {
+                    if (q.Count() == 0)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        q.Enqueue(null);
+                    }
+                }
+                else
+                {
+                    if(node.left != null)
+                    {
+                        q.Enqueue(node.left);
+                    }
+                    if(node.right != null)
+                    {
+                        q.Enqueue(node.right);
+                    }
+
+                    node.next = q.Peek();
+                }
+            }
+
             return root;
         }
 
-        private TreeNode BuildTreeHelper(int[] preorder, int[] inorder, int start, int end)
+        public TreeNode BuildTree(int[] inorder, int[] postorder)
+        {
+            var length = postorder.Count();
+            var root = BuildTreeHelper(postorder, 0, length - 1, inorder, 0, length - 1);
+            return root;
+        }
+
+        private TreeNode BuildTreeHelper(int[] postorder, int postStart, int postEnd, int[] inorder, int inStart, int inEnd)
+        {
+            if (postStart > postEnd || inStart > inEnd)
+            {
+                return null;
+            }
+
+            var node = new TreeNode(postorder[postEnd]);
+
+            var inorderIndex = Search(inorder, node.val);
+
+            node.left = BuildTreeHelper(postorder, postStart, postStart + inorderIndex - inStart - 1, inorder, inStart, inorderIndex - 1);
+            node.right = BuildTreeHelper(postorder, postStart + inorderIndex - inStart, postEnd - 1, inorder, inorderIndex + 1, inEnd);
+
+            return node;
+        }
+
+        private int Search(int[] inorder, int val)
+        {
+            for(int i=0; i< inorder.Length; i++)
+            {
+                if(inorder[i] == val)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public TreeNode BuildPreOrderTree(int[] preorder, int[] inorder)
+        {
+            var length = preorder.Count();
+            var root = BuildPreOrderTreeHelper(preorder, inorder, 0, length - 1);
+            return root;
+        }
+
+        private TreeNode BuildPreOrderTreeHelper(int[] preorder, int[] inorder, int start, int end)
         {
             if(start > end)
             {
@@ -95,8 +246,8 @@ namespace LeetCode
 
             var inorderIndex = Search(inorder, start, end, node.val);
 
-            node.left = BuildTreeHelper(preorder, inorder, start, inorderIndex - 1);
-            node.right = BuildTreeHelper(preorder, inorder, inorderIndex + 1, end);
+            node.left = BuildPreOrderTreeHelper(preorder, inorder, start, inorderIndex - 1);
+            node.right = BuildPreOrderTreeHelper(preorder, inorder, inorderIndex + 1, end);
 
             return node;
         }

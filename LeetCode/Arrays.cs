@@ -12,6 +12,9 @@ namespace LeetCode
         public static void Main()
         {
             var obj = new Arrays();
+            var c4 = new int[] { 1, 2, 3 };
+            var c4Res = obj.CombinationSum4(c4, 4);
+            var c42Res = obj.CombinationSum4_2(c4, 4);
             var numbers = new int[] { 1, 2, 3, 4 };
             obj.PermuteUnique(numbers);
             var candidates = new int[] { 10, 1, 2, 7, 6, 1, 5 };
@@ -89,7 +92,7 @@ namespace LeetCode
                 return;
             }
 
-            if (target == 0 )
+            if (target == 0)
             {
                 res.Add(new List<int>(cur));
                 return;
@@ -137,6 +140,78 @@ namespace LeetCode
                 cur.RemoveAt(cur.Count - 1);
             }
         }
+
+        public IList<IList<int>> CombinationSum4_2(int[] nums, int target)
+        {
+            var res = new List<IList<int>>();
+            if (nums == null || nums.Length == 0)
+            {
+                return res;
+            }
+
+            Traverse4_2(nums, 0, target, new List<int>(), res);
+            return res;
+        }
+
+        private static void Traverse4_2(int[] can, int index, int target, List<int> cur, List<IList<int>> res)
+        {
+            if (target < 0)
+            {
+                return;
+            }
+
+            if (target == 0)
+            {
+                res.Add(new List<int>(cur));
+                return;
+            }
+
+            for (int i = 0; i < can.Length; i++)
+            {
+                cur.Add(can[i]);
+                Traverse4_2(can, i, target - can[i], cur, res);
+                cur.RemoveAt(cur.Count - 1);
+            }
+        }
+
+        public int CombinationSum4(int[] nums, int target)
+        {
+            int[] comb = new int[target + 1];
+            comb[0] = 1;
+            for (int i = 1; i < comb.Length; i++)
+            {
+                for (int j = 0; j < nums.Length; j++)
+                {
+                    if (i - nums[j] >= 0)
+                    {
+                        comb[i] += comb[i - nums[j]];
+                    }
+                }
+            }
+            return comb[target];
+        }
+
+        private static void Traverse4(int[] can, int index, int target, List<int> cur, List<IList<int>> res)
+        {
+            if (target < 0)
+            {
+                return;
+            }
+
+            if (target == 0)
+            {
+                res.Add(new List<int>(cur));
+                return;
+            }
+
+            for (int i = index; i < can.Length; i++)
+            {
+                cur.Add(can[i]);
+                Traverse4(can, i, target - can[i], cur, res);
+                cur.RemoveAt(cur.Count - 1);
+            }
+        }
+
 
         public IList<IList<int>> PermuteUnique(int[] nums)
         {
