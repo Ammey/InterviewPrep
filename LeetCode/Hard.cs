@@ -9,7 +9,7 @@ namespace LeetCode
     public class Hard
     {
         public static void Main()
-        {
+        { 
             string s = "adobecodebanc";
             string t = "abc";
             var isPermutation = CheckInclusion("hello", "ooolleoooleh");

@@ -10,9 +10,41 @@ namespace LeetCode
     {
         public static void Main()
         {
+            var maxRob = Rob(new int[] { 1, 2, 3, 1 });
             var x = new int[] { 1, 100, 1, 1, 1, 100, 1, 1, 100, 1 };
             Fib(3);
             Console.WriteLine(MinCostClimbingStairs(x));
+        }
+
+        public static int Rob(int[] nums)
+        {
+            if (nums == null || nums.Count() == 0)
+            {
+                return 0;
+            }
+            if (nums.Count() == 1)
+            {
+                return nums[0];
+            }
+
+            var count = nums.Count();
+            int[] nums0 = nums.Skip(1).ToArray();
+            int[] nums1 = nums.ToList().GetRange(0, count - 1).ToArray();
+
+            return Math.Max(RobHelper(nums0), RobHelper(nums1));
+        }
+
+        public static int RobHelper(int[] nums)
+        {
+            int prevMax = 0;
+            int currMax = 0;
+            foreach (int x in nums)
+            {
+                int temp = currMax;
+                currMax = Math.Max(prevMax + x, currMax);
+                prevMax = temp;
+            }
+            return currMax;
         }
 
         public static int MinCostClimbingStairs(int[] cost)
