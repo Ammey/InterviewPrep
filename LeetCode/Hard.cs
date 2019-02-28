@@ -10,11 +10,12 @@ namespace LeetCode
     {
         public static void Main()
         {
-            string s = "ADOBECODEBANC";
-            string t = "ABC";
+            string s = "adobecodebanc";
+            string t = "abc";
+            var isPermutation = CheckInclusion("hello", "ooolleoooleh");
             var ans = MinWindow(s, t);
             int[] x = new int[] { 2 };
-            int[] y = new int[] {};
+            int[] y = new int[] { };
 
             Console.WriteLine(FindMedianSortedArrays(x, y));
             Console.ReadLine();
@@ -24,7 +25,7 @@ namespace LeetCode
         // O(log(min(x,y)))
         public static double FindMedianSortedArrays(int[] nums1, int[] nums2)
         {
-            if(nums1.Length > nums2.Length)
+            if (nums1.Length > nums2.Length)
             {
                 return FindMedianSortedArrays(nums2, nums1);
             }
@@ -35,27 +36,27 @@ namespace LeetCode
             int low = 0;
             int high = len1;
 
-            while(low <= high)
+            while (low <= high)
             {
                 int p1 = (low + high) / 2;
                 int p2 = (len1 + len2 + 1) / 2 - p1;
 
-                int maxLeft1 = p1 == 0? int.MinValue : nums1[p1 - 1];
+                int maxLeft1 = p1 == 0 ? int.MinValue : nums1[p1 - 1];
                 int minRight1 = p1 == len1 ? int.MaxValue : nums1[p1];
 
                 int maxLeft2 = p2 == 0 ? int.MinValue : nums2[p2 - 1];
                 int minRight2 = p2 == len2 ? int.MaxValue : nums2[p2];
 
-                if(maxLeft1 <= minRight2 && maxLeft2 <= minRight1)
+                if (maxLeft1 <= minRight2 && maxLeft2 <= minRight1)
                 {
-                    if((len1+len2) % 2 == 0)
+                    if ((len1 + len2) % 2 == 0)
                     {
-                        return (double) (Math.Max(maxLeft1, maxLeft2) + Math.Min(minRight1, minRight2)) / 2;
+                        return (double)(Math.Max(maxLeft1, maxLeft2) + Math.Min(minRight1, minRight2)) / 2;
                     }
 
                     return Math.Max(maxLeft1, maxLeft2);
                 }
-                else if(maxLeft1 > minRight2)
+                else if (maxLeft1 > minRight2)
                 {
                     high = p1 - 1;
                 }
@@ -68,17 +69,34 @@ namespace LeetCode
             return -1;
         }
 
+        // Sliding Window
         public static string MinWindow(string s, string t)
         {
+            if (s.Count() == 0 || t.Count() == 0 || t.Count() > s.Count())
+            {
+                return "";
+            }
+
+            if (string.Equals(s, t))
+            {
+                return t;
+            }
+
             var goal = new Dictionary<char, int>();
-            int goalSize = t.Length;
             int minLen = int.MaxValue;
             string result = "";
 
             //target dictionary
             for (int k = 0; k < t.Length; k++)
             {
-                goal.Add(t[k], goal.ContainsKey(t[k]) ? goal[t[k]] + 1 : 0);
+                if (goal.ContainsKey(t[k]))
+                {
+                    goal[t[k]] += 1;
+                }
+                else
+                {
+                    goal.Add(t[k], 1);
+                }
             }
 
             int i = 0;
@@ -94,37 +112,86 @@ namespace LeetCode
                     continue;
                 }
 
-                //if contains, increse
-                int count = map.ContainsKey(c) ? map[c] : 0;
-                if (count < goal[c])
+                if (map.ContainsKey(c))
+                {
+                    map[c] = map[c] + 1;
+                }
+                else
+                {
+                    map.Add(c, 1);
+                }
+
+                if (goal[c] == map[c])
                 {
                     total++;
                 }
 
-                map.Add(c, count + 1);
-
-                if (total == goalSize)
+                while (i <= j && total == goal.Keys.Count())
                 {
-                    while (!goal.ContainsKey(s[i]) || map[s[i]] > goal[s[i]])
-                    {
-                        char pc = s[i];
-                        if (goal.ContainsKey(pc) && map[pc] > goal[pc])
-                        {
-                            map.Add(pc, map[pc] - 1);
-                        }
+                    c = s[i];
 
-                        i++;
-                    }
-
+                    // Save the smallest window until now.
                     if (minLen > j - i + 1)
                     {
                         minLen = j - i + 1;
-                        result = s.Substring(i, j + 1);
+                        result = s.Substring(i, minLen);
                     }
+
+                    // The character at the position pointed by the
+                    // `Left` pointer is no longer a part of the window.
+                    if (map.ContainsKey(c))
+                    {
+                        map[c] = map[c] - 1;
+                        if (map[c] < goal[c])
+                        {
+                            total--;
+                        }
+                    }
+
+                    // Move the left pointer ahead, this would help to look for a new window.
+                    i++;
                 }
             }
 
             return result;
+        }
+
+        // Sliding window -- Permutation check
+        public static bool CheckInclusion(string s1, string s2)
+        {
+            if (s1.Count() > s2.Count())
+            {
+                return false;
+            }
+
+            int[] s1map = new int[26];
+            int[] s2map = new int[26];
+            for (int i = 0; i < s1.Count(); i++)
+            {
+                s1map[s1[i] - 'a']++;
+                s2map[s2[i] - 'a']++;
+            }
+            for (int i = 0; i < s2.Count() - s1.Count(); i++)
+            {
+                if (Match(s1map, s2map))
+                {
+                    return true;
+                }
+                s2map[s2[i + s1.Count()] - 'a']++;
+                s2map[s2[i] - 'a']--;
+            }
+
+            return Match(s1map, s2map);
+        }
+
+        public static bool Match(int[] s1map, int[] s2map)
+        {
+            for (int i = 0; i < 26; i++)
+            {
+                if (s1map[i] != s2map[i])
+                    return false;
+            }
+            return true;
         }
     }
 }
