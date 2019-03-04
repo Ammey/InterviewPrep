@@ -58,6 +58,7 @@
     <Compile Include="Palindrome.cs" />
     <Compile Include="RandomizedCollection.cs" />
     <Compile Include="ReverseLinkedList.cs" />
+    <Compile Include="SlidingWindow.cs" />
     <Compile Include="StackQueue.cs" />
     <Compile Include="Strings.cs" />
     <Compile Include="SumProblems.cs" />

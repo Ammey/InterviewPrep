@@ -8,7 +8,6 @@ namespace LeetCode
 {
     class Arrays
     {
-        int permuteCount = 0;
         public static void Main()
         {
             var obj = new Arrays();

@@ -10,6 +10,11 @@ namespace LeetCode
     {
         public static void Main()
         {
+            var obj = new Hard();
+            var lcs = "agbdba";
+            var lcsSolution = obj.CalculateRecursive(lcs.ToCharArray(), 0, lcs.Length);
+            var rainWater = new int[] { 0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1 };
+            var rainTrapped = Trap(rainWater);
             string s = "adobecodebanc";
             string t = "abc";
             var isPermutation = CheckInclusion("hello", "ooolleoooleh");
@@ -19,6 +24,89 @@ namespace LeetCode
 
             Console.WriteLine(FindMedianSortedArrays(x, y));
             Console.ReadLine();
+        }
+
+        public int CalculateRecursive(char[] str, int start, int len)
+        {
+            if (len == 1)
+            {
+                return 1;
+            }
+            if (len == 0)
+            {
+                return 0;
+            }
+            if (str[start] == str[start + len - 1])
+            {
+                return 2 + CalculateRecursive(str, start + 1, len - 2);
+            }
+            else
+            {
+                return Math.Max(CalculateRecursive(str, start + 1, len - 1), CalculateRecursive(str, start, len - 1));
+            }
+        }
+
+        // Trapping Rain water
+        // {2, 0, 2} = 2
+        // {0,1,0,2,1,0,1,3,2,1,2,1} = 6
+        public static int Trap(int[] height)
+        {
+            var result = 0;
+            var curMax = 0;
+            var rainStack = new Stack<int>();
+            for(int i=0; i < height.Length; i++)
+            {
+                if(!rainStack.Any())
+                {
+                    if(height[i] != 0)
+                    {
+                        curMax = height[i];
+                        rainStack.Push(height[i]);
+                    }
+                    continue;
+                }
+
+                if(curMax > height[i])
+                {
+                    rainStack.Push(height[i]);
+                }
+                else
+                {
+                    while(rainStack.Any())
+                    {
+                        result = result + (curMax - rainStack.Pop());
+                    }
+                    curMax = height[i];
+                    rainStack.Push(curMax);
+                }
+            }
+
+            if(rainStack.Count > 1)
+            {
+                var lastData = new List<int>();
+                while(rainStack.Any())
+                {
+                    lastData.Add(rainStack.Pop());
+                }
+
+                result += Trap(lastData.ToArray());
+                //var cur = rainStack.Pop();
+                //while(rainStack.Any() && rainStack.Peek() <= cur)
+                //{
+                //    rainStack.Pop();
+                //}
+
+                //if(rainStack.Any())
+                //{
+                //    var newMax = rainStack.Pop();
+                //    while (rainStack.Count > 1)
+                //    {
+                //        result += newMax - rainStack.Pop();
+                //    }
+                //}
+            }
+
+            return result;
         }
 
         // Median of 2 sorted arrays

@@ -25,6 +25,7 @@ namespace LeetCode
             var x = obj.FindRedundantConnection(a);
         }
 
+        // Union Find Disjoint Set
         public int[] FindRedundantConnection(int[,] edges)
         {
             var result = new int[2];
