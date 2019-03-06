@@ -8,12 +8,57 @@ namespace LeetCode
 {
     class Palindrome
     {
+        private int low, maxLen;
+
         public static void Main()
         {
+            var obj = new Palindrome();
+            var lps = obj.LongestPalindrome("babad");
             var x = 0;
             Console.WriteLine(IsPalindrome(x));
             var xx = IsPalindromeNumber(54545);
             Console.ReadLine();
+        }
+
+        public bool CanPermutePalindrome(string s)
+        {
+            var set = new HashSet<char>();
+            for (int i = 0; i < s.Length; ++i)
+            {
+                if (!set.Contains(s[i]))
+                    set.Add(s[i]);
+                else
+                    set.Remove(s[i]);
+            }
+            return set.Count() == 0 || set.Count() == 1;
+        }
+        
+        public string LongestPalindrome(string s)
+        {
+            int len = s.Length;
+            if (len < 2)
+                return s;
+
+            for (int i = 0; i < len - 1; i++)
+            {
+                ExtendPalindrome(s, i, i);
+                ExtendPalindrome(s, i, i + 1);
+            }
+            return s.Substring(low, maxLen);
+        }
+
+        private void ExtendPalindrome(string s, int j, int k)
+        {
+            while (j >= 0 && k < s.Length && s[j] == s[k])
+            {
+                j--;
+                k++;
+            }
+            if (maxLen <= k - j - 1)
+            {
+                low = j + 1;
+                maxLen = k - j - 1;
+            }
         }
 
         public static bool IsPalindrome(int x)
