@@ -10,11 +10,16 @@ namespace LeetCode
     {
         public static void Main()
         {
+
+            var obj = new Dynamic();
+            var res = obj.FindTargetSumWays(new int[] { 1, 1, 1, 1, 1 }, 1);
             var maxRob = Rob(new int[] { 1, 2, 3, 1 });
             var x = new int[] { 1, 100, 1, 1, 1, 100, 1, 1, 100, 1 };
             Fib(3);
             Console.WriteLine(MinCostClimbingStairs(x));
         }
+
+
 
         public static int Rob(int[] nums)
         {
@@ -93,6 +98,39 @@ namespace LeetCode
 
             return fibo[n];
         }
+
+        // https://leetcode.com/problems/target-sum/
+        public int FindTargetSumWays(int[] nums, int S)
+        {
+            // given nums = [1, 2, 3, 4, 5] and target = 3 then one possible solution is +1-2+3-4+5 = 3
+            // Here positive subset is P = [1, 3, 5] and negative subset is N = [2, 4]
+            // target = sum(P) +(-1)*sum(N)
+            // target + sum(P) + sum(N) = sum(P) - sum(N) + sum(P) + sum(N)
+            // target + sum(all items) = 2*sum(P)
+            // so, we should find sum(positive) which is equal (target+sum(all items)/2)
+            // since we have 2 in right part of equation, sum of target and all elemnts should be even!
+            var sums = new Dictionary<int, int>();
+            var total = 0;
+            for (int i = 0; i < nums.Length; i++)
+                total += nums[i];
+
+            if (total < S || (total + S) % 2 == 1) return 0;
+            return FindSumCombination(nums, (S + total) / 2);
+        }
+
+        private int FindSumCombination(int[] nums, int target)
+        {
+
+            var dp = new int[target + 1];
+            dp[0] = 1;
+            for (int i = 0; i < nums.Length; i++)
+            {
+                for (int j = target; j >= nums[i]; j--)
+                    dp[j] += dp[j - nums[i]];
+            }
+            return dp[target];
+        }
+
 
     }
 }

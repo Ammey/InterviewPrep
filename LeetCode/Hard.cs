@@ -8,9 +8,14 @@ namespace LeetCode
 {
     public class Hard
     {
+        private readonly string[] BelowTen = new string[] {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"};
+        private readonly string[] BelowTwenty = new string[] {"Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+        private readonly string[] BelowHundred = new string[] {"", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+
         public static void Main()
         {
             var obj = new Hard();
+            var ans = obj.NumberToWords(3423423);
             var lcs = "agbdba";
             var lcsSolution = obj.CalculateRecursive(lcs.ToCharArray(), 0, lcs.Length);
             var rainWater = new int[] { 0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1 };
@@ -18,12 +23,95 @@ namespace LeetCode
             string s = "adobecodebanc";
             string t = "abc";
             var isPermutation = CheckInclusion("hello", "ooolleoooleh");
-            var ans = MinWindow(s, t);
+            ans = MinWindow(s, t);
             int[] x = new int[] { 2 };
             int[] y = new int[] { };
 
             Console.WriteLine(FindMedianSortedArrays(x, y));
             Console.ReadLine();
+        }
+
+        public class MinHeap
+        {
+            public readonly SortedDictionary<int, Queue<ListNode>> map = new SortedDictionary<int, Queue<ListNode>>();
+
+            public void Add(int val, ListNode node)
+            {
+                if (!map.ContainsKey(val))
+                {
+                    map.Add(val, new Queue<ListNode>());
+                }
+
+                map[val].Enqueue(node);
+            }
+
+            public ListNode PopMin()
+            {
+                int minKey = map.First().Key;
+                ListNode node = map[minKey].Dequeue();
+
+                if (map[minKey].Count == 0)
+                    map.Remove(minKey);
+
+                return node;
+            }
+        }
+
+        public ListNode MergeKLists(ListNode[] lists)
+        {
+            var pq = new MinHeap();
+            foreach(var node in lists)
+            {
+                if(node != null)
+                {
+                    pq.Add(node.val, node);
+                }
+            }
+
+            ListNode head = null;
+            ListNode curr = null;
+
+            while(pq.map.Any())
+            {
+                var node = pq.PopMin();
+
+                if (node.next != null)
+                {
+                    pq.Add(node.next.val, node.next);
+                }
+
+                if (curr == null)
+                {
+                    head = node;
+                    head = curr;
+                }
+                else
+                {
+                    curr.next = node;
+                    curr = curr.next;
+                }
+            }
+
+            return head;
+        }
+
+        public string NumberToWords(int num)
+        {
+            if (num == 0) return "Zero";
+            return NumHelper(num);
+        }
+
+        private string NumHelper(int num)
+        {
+            var result = string.Empty;
+            if (num < 10) result = BelowTen[num];
+            else if (num < 20) result = BelowTwenty[num - 10];
+            else if (num < 100) result = BelowHundred[num / 10] + " " + NumHelper(num % 10);
+            else if (num < 1000) result = NumHelper(num / 100) + " Hundred " + NumHelper(num % 100);
+            else if (num < 1000000) result = NumHelper(num / 1000) + " Thousand " + NumHelper(num % 1000);
+            else if (num < 1000000000) result = NumHelper(num / 1000000) + " Million " + NumHelper(num % 1000000);
+            else result = NumHelper(num / 1000000000) + " Billion " + NumHelper(num % 1000000000);
+            return result.Trim();
         }
 
         public int CalculateRecursive(char[] str, int start, int len)

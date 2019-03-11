@@ -15,6 +15,11 @@ namespace LeetCode
 
         public static void Main()
         {
+            var obj = new BFSQueue();
+            var canParition = obj.CanPartition(new int[] { 1, 5, 11, 5 });
+
+            var deads = new string[] { "0201", "0101", "0102", "1212", "2002" };
+            var ans = obj.OpenLock(deads, "0202");
             var rooms = new List<IList<int>>()
             {
                 new List<int> { 1, 3 },
@@ -84,6 +89,160 @@ namespace LeetCode
             q.box1[3, 3] = '1';
             q.box1[3, 4] = '1';
             var numIslands = q.NumIslands(q.box1);
+        }
+
+        public int FindTargetSumWays(int[] nums, int S)
+        {
+            if (nums == null || nums.Length == 0)
+            {
+                return 0;
+            }
+            return Helper(nums, 0, 0, S, new Dictionary<string, int>());
+        }
+
+        private int Helper(int[] nums, int index, int sum, int S, IDictionary<string, int> map)
+        {
+            var encodeString = index + "->" + sum;
+            if (map.ContainsKey(encodeString))
+            {
+                return map[encodeString];
+            }
+            if (index == nums.Length)
+            {
+                if (sum == S)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            int curNum = nums[index];
+            int add = Helper(nums, index + 1, sum - curNum, S, map);
+            int minus = Helper(nums, index + 1, sum + curNum, S, map);
+            map.Add(encodeString, add + minus);
+            return add + minus;
+        }
+
+        public int OpenLock(string[] deadends, string target)
+        {
+            var q = new Queue<string>();
+            var deads = new HashSet<string>(deadends.ToList());
+            var visited = new HashSet<string>();
+            q.Enqueue("0000");
+            visited.Add("0000");
+            int level = 0;
+            while (q.Any())
+            {
+                int size = q.Count;
+                while (size > 0)
+                {
+                    var s = q.Dequeue();
+                    if (deads.Contains(s))
+                    {
+                        size--;
+                        continue;
+                    }
+                    if (s.Equals(target))
+                    {
+                        return level;
+                    }
+
+                    var sb = s;
+                    var cArr = sb.ToCharArray();
+                    for (int i = 0; i < 4; i++)
+                    {
+                        char c = cArr[i];
+                        var s1 = sb.Substring(0, i) + (c == '9' ? 0 : c - '0' + 1) + sb.Substring(i + 1);
+                        var s2 = sb.Substring(0, i) + (c == '0' ? 9 : c - '0' - 1) + sb.Substring(i + 1);
+                        if (!visited.Contains(s1) && !deads.Contains(s1))
+                        {
+                            q.Enqueue(s1);
+                            visited.Add(s1);
+                        }
+                        if (!visited.Contains(s2) && !deads.Contains(s2))
+                        {
+                            q.Enqueue(s2);
+                            visited.Add(s2);
+                        }
+                    }
+                    size--;
+                }
+                level++;
+            }
+            return -1;
+        }
+
+        public bool CanPartition(int[] nums)
+        {
+            // check edge case
+            if (nums == null || nums.Length == 0)
+            {
+                return true;
+            }
+
+            // preprocess
+            int max = 0;
+            foreach (int num in nums)
+            {
+                max += num;
+            }
+            if (max % 2 != 0)
+            {
+                return false;
+            }
+
+            max /= 2;
+
+            // dp def
+            bool[] dp = new bool[max + 1];
+
+            // dp init
+            dp[0] = true;
+
+            foreach (int num in nums)
+            {
+                for (int i = max; i > 0; i--)
+                {
+                    if (i >= num)
+                    {
+                        dp[i] = dp[i] || dp[i - num];
+                    }
+                }
+            }
+            return dp[max];
+        }
+
+        public bool CanPartitionKSubsets(int[] nums, int k)
+        {
+            int sum = 0, maxNum = 0;
+            for (int i = 0; i < nums.Length; i++)
+            {
+                sum += nums[i];
+                maxNum = Math.Max(maxNum, nums[i]);
+            }
+            if (sum % k != 0 || maxNum > sum / k) return false;
+            return CanKSubsetsSum(nums, k, sum / k, 0, new bool[nums.Length], 0);
+        }
+
+        private bool CanKSubsetsSum(int[] nums, int k, int targetSum, int curSum, bool[] visited, int innerStart)
+        {
+            if (k == 0) return true;
+            else if (curSum > targetSum) return false;
+            else if (curSum == targetSum) return CanKSubsetsSum(nums, k - 1, targetSum, 0, visited, 0);
+
+            for (int i = innerStart; i < nums.Length; i++)
+            {
+                if (!visited[i])
+                {
+                    visited[i] = true;
+                    if (CanKSubsetsSum(nums, k, targetSum, curSum + nums[i], visited, i + 1)) return true;
+                    visited[i] = false;
+                }
+            }
+
+            return false;
         }
 
         public static bool CanVisitAllRooms(IList<IList<int>> rooms)
@@ -218,54 +377,7 @@ namespace LeetCode
             return image;
         }
 
-        public int openLock(String[] deadends, String target)
-        {
-            var q = new Queue<String>();
-            var deads = new HashSet<string>(deadends.ToList());
-            var visited = new HashSet<string>();
-            q.Enqueue("0000");
-            visited.Add("0000");
-            int level = 0;
-            while (!q.Any())
-            {
-                int size = q.Count;
-                while (size > 0)
-                {
-                    String s = q.Peek();
-                    if (deads.Contains(s))
-                    {
-                        size--;
-                        continue;
-                    }
-                    if (s.Equals(target))
-                    {
-                        return level;
-                    }
-
-                    var sb = s;
-                    var cArr = sb.ToCharArray();
-                    for (int i = 0; i < 4; i++)
-                    {
-                        char c = cArr[i];
-                        String s1 = sb.Substring(0, i) + (c == '9' ? 0 : c - '0' + 1) + sb.Substring(i + 1);
-                        String s2 = sb.Substring(0, i) + (c == '0' ? 9 : c - '0' - 1) + sb.Substring(i + 1);
-                        if (!visited.Contains(s1) && !deads.Contains(s1))
-                        {
-                            q.Enqueue(s1);
-                            visited.Add(s1);
-                        }
-                        if (!visited.Contains(s2) && !deads.Contains(s2))
-                        {
-                            q.Enqueue(s2);
-                            visited.Add(s2);
-                        }
-                    }
-                    size--;
-                }
-                level++;
-            }
-            return -1;
-        }
+       
 
         public int NumIslands(char[,] grid)
         {

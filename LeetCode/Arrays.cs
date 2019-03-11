@@ -11,6 +11,7 @@ namespace LeetCode
         public static void Main()
         {
             var obj = new Arrays();
+            var coins = obj.CoinChange(new int[] { 2, 1, 5 }, 11);
             var c4 = new int[] { 1, 2, 3 };
             var c4Res = obj.CombinationSum4(c4, 4);
             var c42Res = obj.CombinationSum4_2(c4, 4);
@@ -37,6 +38,33 @@ namespace LeetCode
             var numss = new int[] { 1, 9, 9 };
             var target1 = PlusOne(numss);
             ans = PivotIndex(numss);
+        }
+
+        // TODO : Must do DP
+        public int CoinChange(int[] coins, int amount)
+        {
+            if (amount < 1)
+            {
+                return 0;
+            }
+
+            int[] dp = new int[amount + 1];
+            int sum = 0;
+
+            while (++sum <= amount)
+            {
+                int min = -1;
+                foreach (int coin in coins)
+                {
+                    if (sum >= coin && dp[sum - coin] != -1)
+                    {
+                        int temp = dp[sum - coin] + 1;
+                        min = min < 0 ? temp : Math.Min(temp, min);
+                    }
+                }
+                dp[sum] = min;
+            }
+            return dp[amount];
         }
 
         public static int MaxSubArray(int[] nums)
