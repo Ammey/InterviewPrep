@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>LeetCode.Arrays</StartupObject>
+    <StartupObject>LeetCode.ReverseLinkedList</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />

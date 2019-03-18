@@ -12,6 +12,8 @@ namespace LeetCode
         {
 
             var obj = new Dynamic();
+            var lis = obj.LengthOfLIS(new int[] { 10, 9, 2, 5, 3, 7, 101, 18 });
+
             var res = obj.FindTargetSumWays(new int[] { 1, 1, 1, 1, 1 }, 1);
             var maxRob = Rob(new int[] { 1, 2, 3, 1 });
             var x = new int[] { 1, 100, 1, 1, 1, 100, 1, 1, 100, 1 };
@@ -19,7 +21,52 @@ namespace LeetCode
             Console.WriteLine(MinCostClimbingStairs(x));
         }
 
+        // Longest Increasing Subsequence (NLogn)
+        public int LengthOfLIS(int[] nums)
+        {
+            int[] dp = new int[nums.Length];
+            int len = 0;
+            foreach (int num in nums)
+            {
+                int i = Array.BinarySearch(dp, 0, len, num);
+                if (i < 0)
+                {
+                    i = -(i + 1);
+                }
+                dp[i] = num;
+                if (i == len)
+                {
+                    len++;
+                }
+            }
+            return len;
+        }
 
+        // Longest Increasing Subsequence (N2)
+        public int LengthOfLIS2(int[] nums)
+        {
+            if (nums.Length == 0)
+            {
+                return 0;
+            }
+            int[] dp = new int[nums.Length];
+            dp[0] = 1;
+            int maxans = 1;
+            for (int i = 1; i < dp.Length; i++)
+            {
+                int maxval = 0;
+                for (int j = 0; j < i; j++)
+                {
+                    if (nums[i] > nums[j])
+                    {
+                        maxval = Math.Max(maxval, dp[j]);
+                    }
+                }
+                dp[i] = maxval + 1;
+                maxans = Math.Max(maxans, dp[i]);
+            }
+            return maxans;
+        }
 
         public static int Rob(int[] nums)
         {

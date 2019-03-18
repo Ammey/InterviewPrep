@@ -11,6 +11,7 @@ namespace LeetCode
         public static void Main()
         {
             var obj = new Arrays();
+            var pow = obj.MyPow(2, 10);
             var coins = obj.CoinChange(new int[] { 2, 1, 5 }, 11);
             var c4 = new int[] { 1, 2, 3 };
             var c4Res = obj.CombinationSum4(c4, 4);
@@ -38,6 +39,56 @@ namespace LeetCode
             var numss = new int[] { 1, 9, 9 };
             var target1 = PlusOne(numss);
             ans = PivotIndex(numss);
+        }
+
+        public double MyPow(double x, int n)
+        {
+            if(n == 0)
+            {
+                return 1;
+            }
+
+            if (n < 0)
+            {
+                n = -n;
+                x = 1 / x;
+            }
+
+            var result = 0.0;
+            if (n % 2 == 0)
+            {
+               result = MyPow(x * x, n / 2);
+            }
+            else
+            {
+                result = x * MyPow(x * x, n / 2);
+            }
+
+            return double.IsInfinity(result) ? 0 : result;
+        }
+
+        //public int QuickSelect(int[] a, int lo, int hi, int k)
+        //{
+        //    int i = lo;
+        //    int j = hi;
+        //    int pivot = a[hi];
+
+        //    while(i > j)
+        //    {
+        //        if(a[i++] > a[j])
+        //        {
+        //            Swap(a, --i, --j);
+        //        }
+        //    }
+
+        //    Swap(a, i, j);
+        //}
+
+        private void Swap(int[] a, int i, int j)
+        {
+            var tmp = a[i];
+            a[i] = a[j];
+            a[j] = a[i];
         }
 
         // TODO : Must do DP

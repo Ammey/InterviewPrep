@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace LeetCode
 {
@@ -18,6 +19,9 @@ namespace LeetCode
             list1.next = new ListNode(3);
             list1.next.next = new ListNode(4);
             list1.next.next.next = new ListNode(5);
+            var obj = new ReverseLinkedList();
+            var swapList = obj.SwapPairs(list1);
+
             var list2 = new ListNode(0);
             list2.next = new ListNode(1);
             //list2.next.next = new ListNode(2);
@@ -371,6 +375,19 @@ namespace LeetCode
             return prev;
         }
 
+        public ListNode SwapPairs(ListNode head)
+        {
+            if (head == null || head.next == null)
+            {
+                return head;
+            }
+
+            ListNode node = head.next;
+            head.next = SwapPairs(head.next.next);
+            node.next = head;
+
+            return node;
+        }
         public static ListNode OddEvenList(ListNode head)
         {
             var odd = head;
