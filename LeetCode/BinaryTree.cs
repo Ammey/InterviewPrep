@@ -108,6 +108,8 @@ namespace LeetCode
             node2.left = node4;
             treeNode.right = node3;
             treeNode.left = node2;
+            var leaves = obj.FindLeaves(treeNode);
+            var zigZag = obj.AverageOfLevels(treeNode);
             var allPaths = obj.BinaryTreePaths(treeNode);
             var resultList = obj.PathSum2(treeNode, 14);
             bool hasSum = obj.HasPathSum(treeNode, 18);
@@ -131,6 +133,44 @@ namespace LeetCode
             var lca = obj.LowestCommonAncestor(treeNode, node2, node4);
         }
 
+        public IList<IList<int>> FindLeaves(TreeNode root)
+        {
+            var result = new List<IList<int>>();
+
+            if(root == null)
+            {
+                return result;
+            }
+
+            while (root != null)
+            {
+                var leaves = new List<int>();
+                root = RemoveLeaves(root, leaves);
+                result.Add(leaves);
+            }
+
+            return result;
+        }
+
+        private TreeNode RemoveLeaves(TreeNode root, IList<int> cur)
+        {
+            if(root == null)
+            {
+                return null;
+            }
+
+            if (root.left == null && root.right == null)
+            {
+                cur.Add(root.val);
+                return null;
+            }
+
+            root.left = RemoveLeaves(root.left, cur);
+            root.right = RemoveLeaves(root.right, cur);
+
+            return root;
+        }
+
         public int MaxDepth(TreeNode root)
         {
             if(root == null)
@@ -142,6 +182,159 @@ namespace LeetCode
             var rDepth = MaxDepth(root.right);
 
             return Math.Max(rDepth, lDepth) + 1;
+        }
+
+        public IList<IList<int>> ZigzagLevelOrder(TreeNode root)
+        {
+            var result = new List<IList<int>>();
+
+            if(root == null)
+            {
+                return result;
+            }
+
+            var st = new Queue<TreeNode>();
+            st.Enqueue(root);
+            st.Enqueue(null);
+
+            bool ltr = true;
+
+            var cur = new List<int>();
+
+            while(st.Any())
+            {
+                var node = st.Dequeue();
+
+                if (node == null)
+                {
+                    if(!ltr)
+                    {
+                        cur.Reverse();
+                    }
+
+                    ltr = !ltr;
+
+                    result.Add(cur);
+                    if (st.Any())
+                    {
+                        st.Enqueue(null);
+                    }
+
+                    cur = new List<int>();
+                }
+                else
+                {
+                    cur.Add(node.val);
+
+                    if (node.left != null)
+                    {
+                        st.Enqueue(node.left);
+                    }
+                    if (node.right != null)
+                    {
+                        st.Enqueue(node.right);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public IList<double> AverageOfLevels(TreeNode root)
+        {
+            var result = new List<double>();
+
+            if (root == null)
+            {
+                return result;
+            }
+
+            var st = new Queue<TreeNode>();
+            st.Enqueue(root);
+            st.Enqueue(null);
+
+            int sum = 0;
+            int count = 0;
+            while (st.Any())
+            {
+                var node = st.Dequeue();
+
+                if (node == null)
+                {
+                    result.Add((double)sum/count);
+                    if (st.Any())
+                    {
+                        st.Enqueue(null);
+                    }
+
+                    sum = 0;
+                    count = 0;
+                }
+                else
+                {
+                    sum += node.val;
+                    count++;
+
+                    if (node.left != null)
+                    {
+                        st.Enqueue(node.left);
+                    }
+                    if (node.right != null)
+                    {
+                        st.Enqueue(node.right);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public IList<IList<int>> LevelOrderBottom(TreeNode root)
+        {
+            var result = new List<IList<int>>();
+
+            if (root == null)
+            {
+                return result;
+            }
+
+            var st = new Queue<TreeNode>();
+            st.Enqueue(root);
+            st.Enqueue(null);
+
+            var cur = new List<int>();
+
+            while (st.Any())
+            {
+                var node = st.Dequeue();
+
+                if (node == null)
+                {
+                    result.Add(cur);
+                    if (st.Any())
+                    {
+                        st.Enqueue(null);
+                    }
+
+                    cur = new List<int>();
+                }
+                else
+                {
+                    cur.Add(node.val);
+
+                    if (node.left != null)
+                    {
+                        st.Enqueue(node.left);
+                    }
+                    if (node.right != null)
+                    {
+                        st.Enqueue(node.right);
+                    }
+                }
+            }
+
+            result.Reverse();
+            return result;
         }
 
         public Node Connect(Node root)
