@@ -15,6 +15,7 @@ namespace LeetCode
         public static void Main()
         {
             var obj = new Hard();
+            var add = obj.AddOperators("105", 5);
             var ans = obj.NumberToWords(3423423);
             var lcs = "agbdba";
             var lcsSolution = obj.CalculateRecursive(lcs.ToCharArray(), 0, lcs.Length);
@@ -29,6 +30,54 @@ namespace LeetCode
 
             Console.WriteLine(FindMedianSortedArrays(x, y));
             Console.ReadLine();
+        }
+
+        // https://leetcode.com/problems/expression-add-operators/
+        public IList<string> AddOperators(string num, int target)
+        {
+            var result = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(num) || num.Length == 1)
+            {
+                return result;
+            }
+
+            OperatorHelper(num, target, result, string.Empty, 0, 0, 0);
+
+            return result;
+        }
+
+        private void OperatorHelper(string num, int target, List<string> result, string path, int pos, long total, long mul)
+        {
+            if (pos == num.Length)
+            {
+                if (target == total)
+                {
+                    result.Add(path);
+                }
+                return;
+            }
+            for (int i = pos; i < num.Length; i++)
+            {
+                if (i != pos && num[pos] == '0')
+                {
+                    break;
+                }
+
+                long cur = long.Parse(num.Substring(pos, i + 1 - pos));
+                if (pos == 0)
+                {
+                    OperatorHelper(num, target, result, path + cur, i + 1, cur, cur);
+                }
+                else
+                {
+                    OperatorHelper(num, target, result, path + "+" + cur, i + 1, total + cur, cur);
+
+                    OperatorHelper(num, target, result, path + "-" + cur, i + 1, total - cur, -cur);
+
+                    OperatorHelper(num, target, result, path + "*" + cur, i + 1, total - mul + mul * cur, mul * cur);
+                }
+            }
         }
 
         public class MinHeap
