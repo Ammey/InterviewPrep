@@ -41,6 +41,30 @@ namespace LeetCode
             ans = PivotIndex(numss);
         }
 
+        public bool IsPerfectSquare(int num)
+        {
+            if (num == 1)
+                return true;
+
+            long low = 1,
+                high = num / 2,
+                mid = 0;
+
+            while (low <= high)
+            {
+                mid = low + (high - low) / 2;
+
+                if ((mid * mid) == num)
+                    return true;
+                else if ((mid * mid) < num)
+                    low = mid + 1;
+                else
+                    high = mid - 1;
+            }
+
+            return false;
+        }
+
         public double MyPow(double x, int n)
         {
             if(n == 0)
