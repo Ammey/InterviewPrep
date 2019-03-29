@@ -8,6 +8,8 @@ namespace LeetCode
 {
     class BinaryTree
     {
+        Node first;
+        Node last;
         int maxSum = int.MinValue;
         int leafSum = 0;
         int preIndex = 0;
@@ -33,6 +35,39 @@ namespace LeetCode
                 left = _left;
                 right = _right;
                 next = _next;
+            }
+        }
+
+        public Node TreeToDoublyList(Node root)
+        {
+            if(root == null)
+            {
+                return root;
+            }
+
+            DLLHelper(root);
+            return first;
+        }
+
+        private void DLLHelper(Node node)
+        {
+            if(node != null)
+            {
+                DLLHelper(node.left);
+
+                if(last != null)
+                {
+                    last.right = node;
+                    node.left = last;
+                }
+                else
+                {
+                    first = node;
+                }
+
+                last = node;
+
+                DLLHelper(node.right);
             }
         }
 
