@@ -11,6 +11,8 @@ namespace LeetCode
         public static void Main()
         {
             var obj = new Arrays();
+            var splitAns = obj.SplitArray(new int[] { 7,2,5,10,8 }, 2);
+            var kAns = obj.SmallestDistancePair(new int[] { 5, 8, 10, 1, 2, 3 }, 3);
             var pow = obj.MyPow(2, 10);
             var coins = obj.CoinChange(new int[] { 2, 1, 5 }, 11);
             var c4 = new int[] { 1, 2, 3 };
@@ -39,6 +41,161 @@ namespace LeetCode
             var numss = new int[] { 1, 9, 9 };
             var target1 = PlusOne(numss);
             ans = PivotIndex(numss);
+        }
+
+        public int LongestConsecutive(int[] nums)
+        {
+            var set = new HashSet<int>();
+            int maxLength = 0;
+            foreach(int num in nums)
+            {
+                set.Add(num);
+            }
+
+            foreach(int num in nums)
+            {
+                if (!set.Contains(num - 1))
+                {
+                    int cur = num;
+                    int streak = 1;
+
+                    while(set.Contains(cur+1))
+                    {
+                        streak++;
+                        cur++;
+                    }
+
+                    maxLength = Math.Max(maxLength, streak);
+                }
+            }
+
+            return maxLength;
+        }
+
+        public char NextGreatestLetter(char[] letters, char target)
+        {
+            int n = letters.Length;
+
+            if (target >= letters[n - 1]) target = letters[0];
+            else target++;
+
+            int lo = 0, hi = n - 1;
+            while (lo < hi)
+            {
+                int mid = lo + (hi - lo) / 2;
+                if (letters[mid] == target) return letters[mid];
+                if (letters[mid] < target) lo = mid + 1;
+                else hi = mid;
+            }
+            return letters[hi];
+        }
+
+        public int FindMin(int[] nums)
+        {
+            int lo = 0;
+            int hi = nums.Length - 1;
+            int mid = 0;
+
+            while (lo < hi)
+            {
+                mid = lo + (hi - lo) / 2;
+
+                if (nums[mid] > nums[hi])
+                {
+                    lo = mid + 1;
+                }
+                else if (nums[mid] < nums[hi])
+                {
+                    hi = mid;
+                }
+                else
+                {
+                    hi--;
+                }
+            }
+            return nums[lo];
+        }
+
+        public int SmallestDistancePair(int[] nums, int k)
+        {
+            Array.Sort(nums);
+
+            int n = nums.Length;
+            int low = 0;
+            int high = nums[n - 1] - nums[0];
+            while(low < high)
+            {
+                int mid = low + (high - low) / 2;
+                int j = 0;
+                int count = 0;
+                for (int i = 0; i < n; ++i)
+                {
+                    while(j<n && nums[j] - nums[i] <= mid)
+                    {
+                        j++;
+                    }
+
+                    count += j - i - 1;
+                }
+
+                if(count >= k)
+                {
+                    high = mid;
+                }
+                else
+                {
+                    low = mid + 1;
+                }
+            }
+
+            return low;
+        }
+
+        public int SplitArray(int[] nums, int m)
+        {
+            int max = 0; long sum = 0;
+            foreach (int num in nums)
+            {
+                max = Math.Max(num, max);
+                sum += num;
+            }
+            if (m == 1) return (int)sum;
+            
+            //binary search
+            long l = max; long r = sum;
+            while (l <= r)
+            {
+                long mid = (l + r) / 2;
+                if (IsValid(mid, nums, m))
+                {
+                    r = mid - 1;
+                }
+                else
+                {
+                    l = mid + 1;
+                }
+            }
+            return (int)l;
+        }
+
+        public bool IsValid(long target, int[] nums, int m)
+        {
+            int count = 1;
+            long total = 0;
+            foreach (int num in nums)
+            {
+                total += num;
+                if (total > target)
+                {
+                    total = num;
+                    count++;
+                    if (count > m)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         public bool IsPerfectSquare(int num)

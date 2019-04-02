@@ -38,6 +38,88 @@ namespace LeetCode
             }
         }
 
+        public bool IsValidBST(TreeNode root)
+        {
+            return IsBSTUtil(root, long.MinValue, long.MaxValue);
+        }
+
+        public bool IsBSTUtil(TreeNode node, long min, long max)
+        {
+            /* an empty tree is BST */
+            if (node == null)
+            {
+                return true;
+            }
+
+            /* false if this node violates the min/max constraints */
+            if (node.val < min || node.val > max)
+            {
+                return false;
+            }
+
+            return (IsBSTUtil(node.left, min, node.val - 1) && IsBSTUtil(node.right, node.val + 1, max));
+        }
+
+        public class BSTIterator
+        {
+            Stack<TreeNode> stk;
+            public BSTIterator(TreeNode root)
+            {
+                stk = new Stack<TreeNode>();
+                var cur = root;
+
+                while(cur != null)
+                {
+                    stk.Push(cur);
+                    cur = cur.left;
+                }
+            }
+
+            /** @return the next smallest number */
+            public int Next()
+            {
+                var node = stk.Pop();
+
+                var cur = node;
+
+                if(cur.right != null)
+                {
+                    cur = cur.right;
+                    while (cur != null)
+                    {
+                        stk.Push(cur);
+                        cur = cur.left;
+                    }
+                }
+
+                return node.val;
+            }
+
+            /** @return whether we have a next smallest number */
+            public bool HasNext()
+            {
+                return stk.Any();
+            }
+        }
+
+        public TreeNode InorderSuccessor(TreeNode root, TreeNode p)
+        {
+            if(root == null)
+            {
+                return null;
+            }
+
+            if(root.val <= p.val)
+            {
+                return InorderSuccessor(root.right, p);
+            }
+            else
+            {
+                var left = InorderSuccessor(root.left, p);
+                return left ?? root;
+            }
+        }
+
         public Node TreeToDoublyList(Node root)
         {
             if(root == null)
@@ -118,31 +200,32 @@ namespace LeetCode
 
         public static void Main()
         {
-            var nTreeNode = new Node(4, null, null, null);
-            var nnode2 = new Node(9, null, null, null);
-            var nnode3 = new Node(10, null, null, null);
-            var nnode4 = new Node(5, null, null, null);
-            var nnode5 = new Node(1, null, null, null);
-            nnode2.right = nnode5;
-            nnode2.left = nnode4;
-            nTreeNode.right = nnode3;
-            nTreeNode.left = nnode2;
+            //var nTreeNode = new Node(4, null, null, null);
+            //var nnode2 = new Node(9, null, null, null);
+            //var nnode3 = new Node(10, null, null, null);
+            //var nnode4 = new Node(5, null, null, null);
+            //var nnode5 = new Node(1, null, null, null);
+            //nnode2.right = nnode5;
+            //nnode2.left = nnode4;
+            //nTreeNode.right = nnode3;
+            //nTreeNode.left = nnode2;
             var obj = new BinaryTree();
-            var next = obj.Connect(nTreeNode);
-            var preorder = new int[] { 3, 9, 20, 15, 7 };
-            var inorder = new int[] { 9, 3, 15, 20, 7 };
-            var postOrder = new int[] { 9, 15, 7, 20, 3 };
-            var pRoot = obj.BuildTree(inorder, postOrder);
-            var cRoot = obj.BuildPreOrderTree(preorder, inorder);
-            var treeNode = new TreeNode(4);
-            var node2 = new TreeNode(9);
+            //var next = obj.Connect(nTreeNode);
+            //var preorder = new int[] { 3, 9, 20, 15, 7 };
+            //var inorder = new int[] { 9, 3, 15, 20, 7 };
+            //var postOrder = new int[] { 9, 15, 7, 20, 3 };
+            //var pRoot = obj.BuildTree(inorder, postOrder);
+            //var cRoot = obj.BuildPreOrderTree(preorder, inorder);
+            var treeNode = new TreeNode(5);
+            var node2 = new TreeNode(3);
             var node3 = new TreeNode(10);
-            var node4 = new TreeNode(5);
-            var node5 = new TreeNode(1);
+            var node4 = new TreeNode(2);
+            var node5 = new TreeNode(4);
             node2.right = node5;
             node2.left = node4;
             treeNode.right = node3;
             treeNode.left = node2;
+            var inOrderSucc = obj.InorderSuccessor(treeNode, node5);
             var leaves = obj.FindLeaves(treeNode);
             var zigZag = obj.AverageOfLevels(treeNode);
             var allPaths = obj.BinaryTreePaths(treeNode);
@@ -166,6 +249,93 @@ namespace LeetCode
             //var postOrderList = PostorderTraversal(treeNode);
             //var levelOrderLists = LevelOrder(treeNode);
             var lca = obj.LowestCommonAncestor(treeNode, node2, node4);
+        }
+
+        public TreeNode DeleteNode(TreeNode root, int key)
+        {
+            if (root == null)
+            {
+                return root;
+            }
+
+            if (root.val == key)
+            {
+                if (root.left == null)
+                {
+                    return root.right;
+                }
+
+                if (root.right == null)
+                {
+                    return root.left;
+                }
+
+                TreeNode p = FindSuccessor(root);
+                root.val = p.val;
+                root.right = DeleteNode(root.right, p.val);
+                return root;
+            }
+            if (root.val < key)
+            {
+                root.right = DeleteNode(root.right, key);
+            }
+            else
+            {
+                root.left = DeleteNode(root.left, key);
+            }
+            return root;
+        }
+
+        private TreeNode FindSuccessor(TreeNode root)
+        {
+            var cur = root.right;
+            while (cur != null && cur.left != null)
+            {
+                cur = cur.left;
+            }
+            return cur;
+        }
+
+        public TreeNode InsertIntoBST(TreeNode root, int val)
+        {
+            if(root == null)
+            {
+                root = new TreeNode(val);
+                return root;
+            }
+
+            if (root.val > val)
+            {
+                root.left = InsertIntoBST(root.left, val);
+            }
+            else
+            {
+                root.right = InsertIntoBST(root.right, val);
+            }
+
+            return root;
+        }
+
+        public TreeNode SearchBST(TreeNode root, int val)
+        {
+            if(root == null)
+            {
+                return null;
+            }
+
+            if(root.val == val)
+            {
+                return root;
+            }
+
+            if(root.val > val)
+            {
+                return SearchBST(root.left, val);
+            }
+            else
+            {
+                return SearchBST(root.right, val);
+            }
         }
 
         public IList<IList<int>> FindLeaves(TreeNode root)

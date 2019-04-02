@@ -34,7 +34,6 @@ namespace LeetCode
             var list2 = new ListNode(3);
             list2.next = new ListNode(4);
             list1.next.next = list2;
-            ReorderList(list1);
             var ans = AddTwoNumbers(list1, list2);
         }
 
