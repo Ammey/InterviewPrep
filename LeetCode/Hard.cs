@@ -15,6 +15,7 @@ namespace LeetCode
         public static void Main()
         {
             var obj = new Hard();
+            var stocks = obj.MaxProfit(2, new int[] { 3, 2, 6, 5, 0, 3 });
             var add = obj.AddOperators("105", 5);
             var ans = obj.NumberToWords(3423423);
             var lcs = "agbdba";
@@ -31,6 +32,69 @@ namespace LeetCode
             Console.WriteLine(FindMedianSortedArrays(x, y));
             Console.ReadLine();
         }
+
+        public int MaxProfit(int[] prices)
+        {
+            int sell1 = 0, sell2 = 0, buy1 = int.MinValue, buy2 = int.MinValue;
+
+            for (int i = 0; i < prices.Length; i++)
+            {
+                buy1 = Math.Max(buy1, -prices[i]);
+                sell1 = Math.Max(sell1, buy1 + prices[i]);
+                buy2 = Math.Max(buy2, sell1 - prices[i]);
+                sell2 = Math.Max(sell2, buy2 + prices[i]);
+            }
+
+            return sell2;
+        }
+
+        public int MaxProfit(int k, int[] prices)
+        {
+            if (k == 0 || prices.Length == 0)
+            {
+                return 0;
+            }
+
+            if (k >= prices.Length)
+            {
+                return AllTimeProfit(prices);
+            }
+
+            var T = new int[k + 1,prices.Length];
+
+            for (int i = 1; i< T.GetLength(0); i++)
+            {
+                int maxDiff = -prices[0];
+                for (int j = 1; j<T.GetLength(1); j++)
+                {
+                    T[i,j] = Math.Max(T[i, j - 1], prices[j] + maxDiff);
+                    maxDiff = Math.Max(maxDiff, T[i - 1, j] - prices[j]);
+                }
+            }
+            //printActualSolution(T, prices);
+            return T[k, prices.Length - 1];
+        }
+
+        public int AllTimeProfit(int[] arr)
+        {
+            int profit = 0;
+            int localMin = arr[0];
+            for (int i = 1; i < arr.Length; i++)
+            {
+                if (arr[i - 1] >= arr[i])
+                {
+                    localMin = arr[i];
+                }
+                else
+                {
+                    profit += arr[i] - localMin;
+                    localMin = arr[i];
+                }
+
+            }
+            return profit;
+        }
+
 
         // https://leetcode.com/problems/expression-add-operators/
         public IList<string> AddOperators(string num, int target)
