@@ -72,6 +72,64 @@ namespace LeetCode
             return res;
         }
 
+        public bool Search2(int[] nums, int target)
+        {
+            int start = 0, end = nums.Length;
+            while (start < end)
+            {
+                int mid = start + (end - start) / 2;
+                if (nums[mid] == target) return true;
+                if (nums[mid] > nums[start])
+                {
+                    if (target < nums[mid] && target >= nums[start]) end = mid;
+                    else start = mid + 1;
+                }
+                else if (nums[mid] < nums[start])
+                {
+                    if (target > nums[mid] && target < nums[start]) start = mid + 1;
+                    else end = mid;
+                }
+                else
+                {
+                    start++;
+                }
+            }
+            return false;
+        }
+
+        public IList<string> FizzBuzz(int n)
+        {
+            var ans = new List<string>();
+
+            for (int num = 1; num <= n; num++)
+            {
+
+                var divisibleBy3 = (num % 3 == 0);
+                var divisibleBy5 = (num % 5 == 0);
+
+                string numAnsStr = "";
+
+                if (divisibleBy3)
+                {
+                    numAnsStr += "Fizz";
+                }
+
+                if (divisibleBy5)
+                {
+                    numAnsStr += "Buzz";
+                }
+
+                if (string.IsNullOrWhiteSpace(numAnsStr))
+                {
+                    numAnsStr += num.ToString();
+                }
+
+                ans.Add(numAnsStr);
+            }
+
+            return ans;
+        }
+
 
         public static int Search(int[] nums, int target)
         {
@@ -95,7 +153,7 @@ namespace LeetCode
             return BSearch(nums, pivot + 1, nums.Length - 1, target);
         }
 
-        public static int FindPivotInRotatedArray(int[] nums, int low, int high)
+        public static int FindPivotInRotatedArray(int[] nums, int low, int high, int num = 0)
         {
             if(low >= high)
             {

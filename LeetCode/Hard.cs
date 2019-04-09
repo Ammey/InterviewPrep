@@ -14,7 +14,26 @@ namespace LeetCode
 
         public static void Main()
         {
+            int[][] matrix = new int[15][];
+            matrix[0] = new int[] { 27, 5, -20, -9, 1, 26, 1, 12, 7, -4, 8, 7, -1, 5, 8 };
+            matrix[1] = new int[] { 16, 28, 8, 3, 16, 28, -10, -7, -5, -13, 7, 9, 20, -9, 26 };
+            matrix[2] = new int[] { 24, -14, 20, 23, 25, -16, -15, 8, 8, -6, -14, -6, 12, -19, -13 };
+            matrix[3] = new int[] { 28, 13, -17, 20, -3, -18, 12, 5, 1, 25, 25, -14, 22, 17, 12 };
+            matrix[4] = new int[] { 7, 29, -12, 5, -5, 26, -5, 10, -5, 24, -9, -19, 20, 0, 18 };
+            matrix[5] = new int[] { -7, -11, -8, 12, 19, 18, -15, 17, 7, -1, -11, -10, -1, 25, 17 };
+            matrix[6] = new int[] { -3, -20, -20, -7, 14, -12, 22, 1, -9, 11, 14, -16, -5, -12, 14 };
+            matrix[7] = new int[] { -20, -4, -17, 3, 3, -18, 22, -13, -1, 16, -11, 29, 17, -2, 22 };
+            matrix[8] = new int[] { 23, -15, 24, 26, 28, -13, 10, 18, -6, 29, 27, -19, -19, -8, 0 };
+            matrix[9] = new int[] { 5, 9, 23, 11, -4, -20, 18, 29, -6, -4, -11, 21, -6, 24, 12 };
+            matrix[10] = new int[] { 13, 16, 0, -20, 22, 21, 26, -3, 15, 14, 26, 17, 19, 20, -5 };
+            matrix[11] = new int[] { 15, 1, 22, -6, 1, -9, 0, 21, 12, 27, 5, 8, 8, 18, -1 };
+            matrix[12] = new int[] { 15, 29, 13, 6, -11, 7, -6, 27, 22, 18, 22, -3, -9, 20, 14 };
+            matrix[13] = new int[] { 26, -6, 12, -10, 0, 26, 10, 1, 11, -10, -16, -18, 29, 8, -8 };
+            matrix[14] = new int[] { -19, 14, 15, 18, -10, 24, -9, -7, -19, -14, 23, 23, 17, -5, 6 };
+
             var obj = new Hard();
+            var maxK = obj.MaxSumSubmatrix(matrix, -100);
+
             var stocks = obj.MaxProfit(2, new int[] { 3, 2, 6, 5, 0, 3 });
             var add = obj.AddOperators("105", 5);
             var ans = obj.NumberToWords(3423423);
@@ -31,6 +50,137 @@ namespace LeetCode
 
             Console.WriteLine(FindMedianSortedArrays(x, y));
             Console.ReadLine();
+        }
+
+        public int ShortestSubarray(int[] A, int K)
+        {
+            if (A == null || A.Length == 0)
+            {
+                return -1;
+            }
+            int result = A.Length + 1;
+            int start = -1;
+            int sum = 0;
+            int pos;
+            for (int i = 0; i < A.Length; i++)
+            {
+                if (A[i] >= K) return 1;
+                sum += A[i];
+                pos = i;
+                while (pos != 0 && pos > start && A[pos] < 0)
+                {
+                    A[pos - 1] += A[pos];
+                    A[pos--] = 0;
+                }
+                if (sum >= K)
+                {
+                    while (sum - A[start + 1] >= K && start + 1 < i)
+                    {
+                        sum -= A[++start];
+                    }
+
+                    result = Math.Min(result, i - start);
+                }
+                if (sum <= 0)
+                {
+                    sum = 0;
+                    start = i;
+                }
+            }
+            return result == A.Length + 1 ? -1 : result;
+        }
+
+        public int MaxSumSubmatrix(int[][] matrix, int k)
+        {
+            var colMax = matrix[0].Length;
+            var rowMax = matrix.Length;
+            int[] curRect = new int[rowMax];
+            int maxSum = int.MinValue;
+
+           for(int i=0; i < colMax; i++)
+           {
+                curRect = new int[rowMax];
+                for (int j = i; j < colMax; j++)
+                {
+                    for(int r = 0; r < rowMax; r++)
+                    {
+                        curRect[r] += matrix[r][j];
+                    }
+
+                    for (int m = 0; m < rowMax; ++m)
+                    {
+                        for (int n = -1; n < m; ++n)
+                        {
+                            int curVal = curRect[m] - (n == -1 ? 0 : curRect[n]);
+                            //if (curVal == k)
+                            //    return k;
+                            if (curVal <= k)
+                                maxSum = Math.Max(maxSum, curVal);
+                        }
+                    }
+                }
+            }
+
+            return maxSum;
+        }
+
+        public int MaxSumLessThanK(int[] arr, int k)
+        {            
+            int sum = arr[0], maxSum = int.MinValue, start = 0;
+            if (k < 0)
+            {
+                for (int i = 1; i < arr.Length; i++)
+                {
+                    if(sum <= k)
+                    {
+                        maxSum = Math.Max(sum, maxSum);
+                        if (maxSum == k)
+                        {
+                            return k;
+                        }
+                    }
+
+                    while (sum + arr[i] > k && start < i)
+                    {
+                        sum -= arr[start];
+                        start++;
+                    }
+                }
+            }
+
+            for(int i=1; i< arr.Length; i++)
+            {
+                if(sum <= k)
+                {
+                    maxSum = Math.Max(sum, maxSum);
+                    if(maxSum == k)
+                    {
+                        return k;
+                    }
+                }
+
+                while(sum + arr[i] > k && start < i)
+                {
+                    sum -= arr[start];
+                    start++;
+                }
+
+                if(sum + arr[i] < k)
+                {
+                    sum += arr[i];
+                }
+                else
+                {
+                    sum = arr[i];
+                }
+            }
+
+            if (sum <= k)
+            {
+                maxSum = Math.Max(sum, maxSum);
+            }
+
+            return maxSum;
         }
 
         public int MaxProfit(int[] prices)
